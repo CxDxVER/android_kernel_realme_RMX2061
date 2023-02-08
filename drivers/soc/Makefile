@@ -25,10 +25,6 @@ obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
 obj-$(CONFIG_ARCH_ZX)		+= zte/
 obj-y                           += oplus/
 
-#ifdef OPLUS_FEATURE_IOMONITOR
-obj-$(CONFIG_IOMONITOR)    +=  oplus/iomonitor/
-#endif /*OPLUS_FEATURE_IOMONITOR*/
-
 #ifdef VENDOR_EDIT
 #/*ye.zhang@BSP.Bootloader.Bootflow, 2020-6-18, Add for oppo project*/
 obj-y				+= oppo/
