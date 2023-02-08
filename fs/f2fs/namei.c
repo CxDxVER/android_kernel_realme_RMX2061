@@ -309,11 +309,6 @@ static void set_compress_inode(struct f2fs_sb_info *sbi, struct inode *inode,
 	}
 }
 
-static bool is_log_file(const char *filename)
-{
-	return is_extension_exist(filename, "log");
-}
-
 static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
 						bool excl)
 {
@@ -337,9 +332,6 @@ static int f2fs_create(struct inode *dir, struct dentry *dentry, umode_t mode,
 
 	if (!test_opt(sbi, DISABLE_EXT_IDENTIFY))
 		set_file_temperature(sbi, inode, dentry->d_name.name);
-
-	if (is_log_file(dentry->d_name.name))
-		set_inode_flag(inode, FI_LOG_FILE);
 
 	set_compress_inode(sbi, inode, dentry->d_name.name);
 
@@ -491,7 +483,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
 	int err = 0;
 	unsigned int root_ino = F2FS_ROOT_INO(F2FS_I_SB(dir));
 	struct f2fs_filename fname;
-	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
 
 	trace_f2fs_lookup_start(dir, dentry, flags);
 
@@ -546,11 +537,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
 		err = -EPERM;
 		goto out_iput;
 	}
-
-	if (is_log_file(dentry->d_name.name))
-		set_inode_flag(inode, FI_LOG_FILE);
-	if (!test_opt(sbi, DISABLE_EXT_IDENTIFY) && !file_is_cold(inode))
-		set_file_temperature(sbi, inode, dentry->d_name.name);
 out_splice:
 #ifdef CONFIG_UNICODE
 	if (!inode && IS_CASEFOLDED(dir)) {
