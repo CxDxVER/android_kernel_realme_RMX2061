@@ -13,7 +13,7 @@ KERNEL_DEFCONFIG=falcon_defconfig
 
 DEVICE=reatoll
 
-VERSION=Morticia-v10.0
+VERSION=Morticia-v10.1
 
 DATE=$(TZ=Asia/Kolkata date +"%Y%m%d-%T")
 
