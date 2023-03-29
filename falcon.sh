@@ -25,17 +25,22 @@ FINAL_KERNEL_ZIP=Falcon-X-${VERSION}-${DEVICE}-${TANGGAL}.zip
 
 # Verbose Build
 VERBOSE=0
-
-# LD
-LINKER=ld.lld
 ##----------------------------------------------------------##
 
 # Exports
 
-export PATH="$HOME/neutron/bin:$PATH"
+export PATH="$HOME/proton/bin:$PATH"
 export ARCH=arm64
 export SUBARCH=arm64
-export KBUILD_COMPILER_STRING="$($HOME/neutron/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+export KBUILD_COMPILER_STRING="$($HOME/proton/bin/clang --version | head -n 1 | perl -pe 's/\(http.*?\)//gs' | sed -e 's/  */ /g' -e 's/[[:space:]]*$//')"
+
+if ! [ -d "$HOME/proton" ]; then
+echo "Proton clang not found! Cloning..."
+if ! git clone -q https://github.com/kdrag0n/proton-clang --depth=1 --single-branch ~/proton; then
+echo "Cloning failed! Aborting..."
+exit 1
+fi
+fi
 
 # Speed up build process
 MAKE="./makeparallel"
@@ -70,15 +75,11 @@ make -j$(nproc --all) O=out \
                       CC=clang \
                       CROSS_COMPILE=aarch64-linux-gnu- \
                       CROSS_COMPILE_ARM32=arm-linux-gnueabi- \
-                      LD=${LINKER} \
-	                  AR=llvm-ar \
-	                  NM=llvm-nm \
-	                  OBJCOPY=llvm-objcopy \
-	                  OBJDUMP=llvm-objdump \
-  	                  STRIP=llvm-strip \
-	                  READELF=llvm-readelf \
-	                  OBJSIZE=llvm-size \
-	                  V=$VERBOSE 2>&1 | tee error.log                           
+                      NM=llvm-nm \
+                      OBJCOPY=llvm-objcopy \
+                      OBJDUMP=llvm-objdump \
+                      STRIP=llvm-strip \
+			          V=$VERBOSE 2>&1 | tee error.log                      
 
 ##----------------------------------------------------------##
 
